@@ -2,57 +2,97 @@
 
 namespace App\Services;
 
-class KnapsackService
+class KnapsackHeuristicService
 {
-    public function solve(array $processes, int $capacity): array
+    public function generateFixedProblem(): array
     {
-        $totalProcesses = count($processes);
+        return [
+            'capacity' => 8,
+            'processes' => [
+                [
+                    'name' => 'Banco de Dados',
+                    'memory' => 4,
+                    'priority' => 10,
+                ],
+                [
+                    'name' => 'Servidor Web',
+                    'memory' => 2,
+                    'priority' => 7,
+                ],
+                [
+                    'name' => 'Backup',
+                    'memory' => 3,
+                    'priority' => 5,
+                ],
+                [
+                    'name' => 'Monitoramento',
+                    'memory' => 1,
+                    'priority' => 4,
+                ],
+                [
+                    'name' => 'Relatório pesado',
+                    'memory' => 5,
+                    'priority' => 8,
+                ],
+            ],
+        ];
+    }
 
-        // Tabela usada para guardar a melhor prioridade possível
-        // para cada quantidade de processos e de memória disponível.
-        $table = array_fill(
-            0,
-            $totalProcesses + 1,
-            array_fill(0, $capacity + 1, 0)
-        );
+    public function generateRandomProblem(int $size): array
+    {
+        $processes = [];
 
-        for ($i = 1; $i <= $totalProcesses; $i++) {
-            $memory = $processes[$i - 1]['memory'];
-            $priority = $processes[$i - 1]['priority'];
-
-            for ($currentMemory = 0; $currentMemory <= $capacity; $currentMemory++) {
-                if ($memory <= $currentMemory) {
-                    $withoutProcess = $table[$i - 1][$currentMemory];
-
-                    $withProcess = $priority + $table[$i - 1][$currentMemory - $memory];
-
-                    $table[$i][$currentMemory] = max($withoutProcess, $withProcess);
-                } else {
-                    $table[$i][$currentMemory] = $table[$i - 1][$currentMemory];
-                }
-            }
+        for ($i = 1; $i <= $size; $i++) {
+            $processes[] = [
+                'name' => 'Processo ' . $i,
+                'memory' => rand(1, 8),
+                'priority' => rand(1, 20),
+            ];
         }
-
-        $selectedProcesses = [];
-        $remainingMemory = $capacity;
-
-        // Volta pela tabela para descobrir quais processos foram escolhidos.
-        for ($i = $totalProcesses; $i > 0; $i--) {
-            if ($table[$i][$remainingMemory] != $table[$i - 1][$remainingMemory]) {
-                $process = $processes[$i - 1];
-
-                $selectedProcesses[] = $process;
-                $remainingMemory -= $process['memory'];
-            }
-        }
-
-        $usedMemory = array_sum(array_column($selectedProcesses, 'memory'));
 
         return [
-            'max_priority' => $table[$totalProcesses][$capacity],
-            'selected_processes' => array_reverse($selectedProcesses),
+            'capacity' => rand(8, 20),
+            'processes' => $processes,
+        ];
+    }
+
+    public function generateInitialSolution(array $processes): array
+    {
+        $solution = [];
+
+        foreach ($processes as $process) {
+            $solution[] = rand(0, 1);
+        }
+
+        return $solution;
+    }
+
+    public function evaluate(array $processes, array $solution, int $capacity): array
+    {
+        $usedMemory = 0;
+        $totalPriority = 0;
+        $selectedProcesses = [];
+
+        foreach ($solution as $index => $selected) {
+            if ($selected == 1) {
+                $process = $processes[$index];
+
+                $usedMemory += $process['memory'];
+                $totalPriority += $process['priority'];
+                $selectedProcesses[] = $process;
+            }
+        }
+
+        if ($usedMemory > $capacity) {
+            $totalPriority = 0;
+        }
+
+        return [
+            'solution' => $solution,
             'used_memory' => $usedMemory,
-            'available_memory' => $capacity - $usedMemory,
+            'total_priority' => $totalPriority,
+            'is_valid' => $usedMemory <= $capacity,
+            'selected_processes' => $selectedProcesses,
         ];
     }
 }
