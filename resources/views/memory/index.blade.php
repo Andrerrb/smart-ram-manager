@@ -102,25 +102,28 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Nome do processo</th>
+                         <th>Nome do processo</th>
                         <th>Memória necessária em GB</th>
                         <th>Prioridade</th>
+                        <th>Ação</th>
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="process-list">
                     <tr>
-                        <td>
-                            <input type="text" name="names[]" value="Banco de Dados">
-                        </td>
-                        <td>
+                         <td>
+                             <input type="text" name="names[]" value="Banco de Dados">
+                         </td>
+                     <td>
                             <input type="number" name="memories[]" value="4">
-                        </td>
-                        <td>
+                         </td>
+                    <td>
                             <input type="number" name="priorities[]" value="10">
                         </td>
+                     <td>
+                             <button type="button" onclick="removeProcess(this)">Remover</button>
+                        </td>
                     </tr>
-
                     <tr>
                         <td>
                             <input type="text" name="names[]" value="Servidor Web">
@@ -171,8 +174,38 @@
                 </tbody>
             </table>
 
+            <button type="button" onclick="addProcess()">Adicionar processo</button>
             <button type="submit">Calcular melhor alocação</button>
-        </form>
+                </form>
     </div>
+
+<script>
+    function addProcess() {
+        const processList = document.getElementById('process-list');
+
+        const newRow = document.createElement('tr');
+
+        newRow.innerHTML = `
+            <td>
+                <input type="text" name="names[]" placeholder="Nome do processo">
+            </td>
+            <td>
+                <input type="number" name="memories[]" placeholder="Memória em GB">
+            </td>
+            <td>
+                <input type="number" name="priorities[]" placeholder="Prioridade">
+            </td>
+            <td>
+                <button type="button" onclick="removeProcess(this)">Remover</button>
+            </td>
+        `;
+
+        processList.appendChild(newRow);
+    }
+
+        function removeProcess(button) {
+            button.closest('tr').remove();
+    }
+</script>
 </body>
 </html>
