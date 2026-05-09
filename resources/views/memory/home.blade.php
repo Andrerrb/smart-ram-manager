@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
 
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+
     <title>Smart RAM Manager</title>
 
     <style>
