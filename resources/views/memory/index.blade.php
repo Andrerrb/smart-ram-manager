@@ -13,7 +13,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: auto;
             background: white;
             padding: 30px;
@@ -22,6 +22,12 @@
 
         h1 {
             color: #222;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #222;
+            margin-top: 30px;
         }
 
         p {
@@ -29,10 +35,35 @@
             line-height: 1.5;
         }
 
+        .info-box {
+            background: #eef2ff;
+            border-left: 5px solid #2563eb;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .capacity-input {
+            max-width: 180px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         th {
@@ -43,25 +74,53 @@
         th, td {
             border: 1px solid #ccc;
             padding: 10px;
+            text-align: left;
         }
 
         input {
             width: 95%;
             padding: 8px;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
         }
 
         button {
-            margin-top: 20px;
             padding: 12px 20px;
-            background: #222;
             color: white;
             border: none;
             cursor: pointer;
             border-radius: 5px;
         }
 
-        button:hover {
-            background: #444;
+        .btn-add {
+            background: #2563eb;
+        }
+
+        .btn-add:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-calculate {
+            background: #16a34a;
+        }
+
+        .btn-calculate:hover {
+            background: #15803d;
+        }
+
+        .btn-remove {
+            background: #dc2626;
+            padding: 8px 12px;
+        }
+
+        .btn-remove:hover {
+            background: #b91c1c;
         }
 
         .error {
@@ -69,6 +128,13 @@
             padding: 10px;
             border: 1px solid #ff9999;
             margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .footer-note {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #666;
         }
     </style>
 </head>
@@ -79,10 +145,15 @@
 
         <p>
             Este sistema simula o gerenciamento de memória RAM de um servidor usando
-            o problema da Mochila 0/1. Cada processo possui um consumo de memória e uma
-            prioridade. O objetivo é escolher os processos mais importantes sem ultrapassar
-            a memória disponível.
+            o problema da Mochila 0/1.
         </p>
+
+        <div class="info-box">
+            <strong>Como funciona:</strong>
+            a RAM disponível representa a capacidade da mochila. Cada processo consome
+            uma quantidade de memória e possui uma prioridade. O algoritmo escolhe a
+            melhor combinação possível sem ultrapassar o limite informado.
+        </div>
 
         @if ($errors->any())
             <div class="error">
@@ -93,16 +164,18 @@
         <form action="{{ route('memory.calculate') }}" method="POST">
             @csrf
 
-            <label>Memória RAM disponível:</label>
-            <input type="number" name="capacity" value="8" required>
-            <span>GB</span>
+            <div class="form-group">
+                <label>Memória RAM disponível:</label>
+                <input class="capacity-input" type="number" name="capacity" value="8" required>
+                <span>GB</span>
+            </div>
 
             <h2>Processos</h2>
 
             <table>
                 <thead>
                     <tr>
-                         <th>Nome do processo</th>
+                        <th>Nome do processo</th>
                         <th>Memória necessária em GB</th>
                         <th>Prioridade</th>
                         <th>Ação</th>
@@ -111,19 +184,20 @@
 
                 <tbody id="process-list">
                     <tr>
-                         <td>
-                             <input type="text" name="names[]" value="Banco de Dados">
-                         </td>
-                     <td>
+                        <td>
+                            <input type="text" name="names[]" value="Banco de Dados">
+                        </td>
+                        <td>
                             <input type="number" name="memories[]" value="4">
-                         </td>
-                    <td>
+                        </td>
+                        <td>
                             <input type="number" name="priorities[]" value="10">
                         </td>
-                     <td>
-                             <button type="button" onclick="removeProcess(this)">Remover</button>
+                        <td>
+                            <button type="button" class="btn-remove" onclick="removeProcess(this)">Remover</button>
                         </td>
                     </tr>
+
                     <tr>
                         <td>
                             <input type="text" name="names[]" value="Servidor Web">
@@ -133,6 +207,9 @@
                         </td>
                         <td>
                             <input type="number" name="priorities[]" value="7">
+                        </td>
+                        <td>
+                            <button type="button" class="btn-remove" onclick="removeProcess(this)">Remover</button>
                         </td>
                     </tr>
 
@@ -146,6 +223,9 @@
                         <td>
                             <input type="number" name="priorities[]" value="5">
                         </td>
+                        <td>
+                            <button type="button" class="btn-remove" onclick="removeProcess(this)">Remover</button>
+                        </td>
                     </tr>
 
                     <tr>
@@ -157,6 +237,9 @@
                         </td>
                         <td>
                             <input type="number" name="priorities[]" value="4">
+                        </td>
+                        <td>
+                            <button type="button" class="btn-remove" onclick="removeProcess(this)">Remover</button>
                         </td>
                     </tr>
 
@@ -170,42 +253,53 @@
                         <td>
                             <input type="number" name="priorities[]" value="8">
                         </td>
+                        <td>
+                            <button type="button" class="btn-remove" onclick="removeProcess(this)">Remover</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
 
-            <button type="button" onclick="addProcess()">Adicionar processo</button>
-            <button type="submit">Calcular melhor alocação</button>
-                </form>
+            <div class="actions">
+                <button type="button" class="btn-add" onclick="addProcess()">Adicionar processo</button>
+
+                <button type="submit" class="btn-calculate">Calcular melhor alocação</button>
+            </div>
+        </form>
+
+        <p class="footer-note">
+            Cada processo pode ser escolhido ou não escolhido, por isso foi usada a abordagem
+            da Mochila 0/1.
+        </p>
     </div>
 
-<script>
-    function addProcess() {
-        const processList = document.getElementById('process-list');
+    <script>
+        function addProcess() {
+            const processList = document.getElementById('process-list');
 
-        const newRow = document.createElement('tr');
+            const newRow = document.createElement('tr');
 
-        newRow.innerHTML = `
-            <td>
-                <input type="text" name="names[]" placeholder="Nome do processo">
-            </td>
-            <td>
-                <input type="number" name="memories[]" placeholder="Memória em GB">
-            </td>
-            <td>
-                <input type="number" name="priorities[]" placeholder="Prioridade">
-            </td>
-            <td>
-                <button type="button" onclick="removeProcess(this)">Remover</button>
-            </td>
-        `;
+            newRow.innerHTML = `
+                <td>
+                    <input type="text" name="names[]" placeholder="Nome do processo">
+                </td>
+                <td>
+                    <input type="number" name="memories[]" placeholder="Memória em GB">
+                </td>
+                <td>
+                    <input type="number" name="priorities[]" placeholder="Prioridade">
+                </td>
+                <td>
+                    <button type="button" class="btn-remove" onclick="removeProcess(this)">Remover</button>
+                </td>
+            `;
 
-        processList.appendChild(newRow);
-    }
+            processList.appendChild(newRow);
+        }
 
         function removeProcess(button) {
             button.closest('tr').remove();
-    }
-</script>
+        }
+    </script>
 </body>
 </html>

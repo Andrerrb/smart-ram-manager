@@ -33,3 +33,58 @@ Clone o repositório:
 
 ```bash
 git clone https://github.com/Andrerrb/smart-ram-manager.git
+```
+
+Entre na pasta do projeto:
+
+```bash
+cd smart-ram-manager
+```
+
+Instale as dependências:
+
+```bash
+composer install
+```
+
+Crie o arquivo `.env`:
+
+```bash
+copy .env.example .env
+```
+
+Gere a chave da aplicação:
+
+```bash
+php artisan key:generate
+```
+
+Execute o servidor:
+
+```bash
+php artisan serve
+```
+
+Acesse no navegador:
+
+```txt
+http://127.0.0.1:8000
+```
+
+## Exemplo de uso
+
+Com 8 GB de RAM disponível, o sistema pode analisar processos como:
+
+| Processo | Memória | Prioridade |
+|---|---:|---:|
+| Banco de Dados | 4 GB | 10 |
+| Servidor Web | 2 GB | 7 |
+| Backup | 3 GB | 5 |
+| Monitoramento | 1 GB | 4 |
+| Relatório pesado | 5 GB | 8 |
+
+O algoritmo seleciona a combinação que gera a maior prioridade possível sem ultrapassar o limite de memória.
+
+## Autor
+
+André Ribeiro Rodrigues Batista | Kauã Henrique Albertino do Carmo
