@@ -158,6 +158,30 @@ class MemoryController extends Controller
             return back()->with('message', 'Têmpera Simulada executada com sucesso.');
         }
 
+        if ($method === 'genetic_algorithm') {
+           $populationSize = (int) $request->input('tp', 10);
+           $generations = (int) $request->input('ng', 50);
+           $crossoverRate = (float) str_replace(',', '.', $request->input('tc', 0.8));
+           $mutationRate = (float) str_replace(',', '.', $request->input('tm', 0.2));
+           $generationInterval = (float) str_replace(',', '.', $request->input('ig', 0.1));
+
+           $result = $service->geneticAlgorithm(
+               $problem['processes'],
+               $problem['capacity'],
+               $populationSize,
+               $generations,
+               $crossoverRate,
+               $mutationRate,
+               $generationInterval
+    );
+
+    session([
+        'method_result' => $result,
+    ]);
+
+    return back()->with('message', 'Algoritmo Genético executado com sucesso.');
+}
+
         if ($method === 'comparative_analysis') {
             $result = $service->comparativeAnalysis(
                 $problem['processes'],
