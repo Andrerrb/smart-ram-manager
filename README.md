@@ -239,6 +239,18 @@ http://127.0.0.1:8000
 
 Para a atividade da Prova 2, deve-se utilizar N = 50 nas execuções comparativas.
 
+## Relatórios Gerados
+
+O sistema gera relatórios em formato CSV dentro da pasta:
+
+storage/app/reports
+
+Arquivos gerados:
+
+- ag_parametros.csv: parâmetros utilizados na execução do Algoritmo Genético.
+- ag_top3.csv: três melhores soluções encontradas pelo Algoritmo Genético.
+- comparativo_metodos.csv: comparação entre os métodos implementados.
+
 ## Exemplo de problema fixo
 
 No modo FIXO, o sistema utiliza o seguinte problema:
